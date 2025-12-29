@@ -145,3 +145,6 @@ export default function StandingsPage() {
           <p>© 2025 TourGanizer. All rights reserved.</p>
         </div>
       </footer>
+    </>
+  )
+}
