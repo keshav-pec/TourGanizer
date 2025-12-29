@@ -63,6 +63,32 @@ export default function CreateTournamentPage() {
 
   async function handleSubmit(e) {
     e.preventDefault()
+    // This will be called by both buttons, but we'll handle the action type separately
+  }
+
+  async function handleSaveDraft(e) {
+    e.preventDefault()
+    // TODO: Replace with Supabase insert with status 'draft'
+    // const { data, error } = await supabase.from('tournaments').insert([{ 
+    //   name: form.name, 
+    //   date: form.date,
+    //   time: form.time,
+    //   rounds: form.rounds,
+    //   out_rounds: form.outRounds,
+    //   members_per_team: form.membersPerTeam,
+    //   status: 'draft',
+    //   created_by: user.id 
+    // }])
+    // Then insert teams and members
+    
+    // Mock slug generation
+    const slug = form.name.toLowerCase().replace(/\s+/g, '-')
+    // Navigate to tournaments page or dashboard
+    navigate(`/${username}/tournaments`)
+  }
+
+  async function handleContinueToPayment(e) {
+    e.preventDefault()
     // TODO: Replace with Supabase insert
     // const { data, error } = await supabase.from('tournaments').insert([{ 
     //   name: form.name, 
@@ -77,7 +103,8 @@ export default function CreateTournamentPage() {
     
     // Mock slug generation
     const slug = form.name.toLowerCase().replace(/\s+/g, '-')
-    navigate(`/${username}/tournaments/${slug}`)
+    // Navigate to payment page (to be created)
+    navigate(`/${username}/tournaments/${slug}/payment`)
   }
 
   if (!user) {
@@ -113,7 +140,7 @@ export default function CreateTournamentPage() {
           {/* Tournament Name as Heading */}
           <div className="tournament-name-row">
             <h2 className="tournament-name-heading">
-              Tournament Name
+              Tournament Name : 
             </h2>
             <input 
               type="text" 
@@ -277,9 +304,14 @@ export default function CreateTournamentPage() {
             ))}
           </div>
 
-          <button type="submit" className="btn btn-primary" style={{ marginTop: '1rem' }}>
-            Create Tournament
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'space-between' }}>
+            <button type="button" onClick={handleSaveDraft} className="btn btn-secondary">
+              Save as Draft
+            </button>
+            <button type="button" onClick={handleContinueToPayment} className="btn btn-primary">
+              Continue to Payment
+            </button>
+          </div>
         </form>
       </div>
 
