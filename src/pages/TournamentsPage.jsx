@@ -71,7 +71,7 @@ export default function TournamentsPage() {
           </Link>
         </div>
         <div className="nav-actions">
-          <Link to={`/${username}`} className="btn btn-text" style={{marginRight: '0.5rem'}}>
+          <Link to={`/${username}`} className="btn btn-text">
             Dashboard
           </Link>
           <button className="btn btn-secondary" onClick={handleSignOut}>
@@ -92,7 +92,7 @@ export default function TournamentsPage() {
           {tournaments.map(tournament => (
             <Link 
               key={tournament.id} 
-              to={`/${username}/tournaments/${tournament.slug}`}
+              to={`/tournament/${tournament.slug}`}
               className="tournament-list-item"
             >
               <div className="tournament-list-main">

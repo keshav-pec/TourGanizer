@@ -20,10 +20,11 @@ export default function App() {
         <Route path="/:username" element={<OrganizerDashboard />} />
         <Route path="/:username/tournaments" element={<TournamentsPage />} />
         <Route path="/:username/tournaments/create" element={<CreateTournamentPage />} />
-        <Route path="/:username/tournaments/:slug" element={<TournamentDashboard />} />
-        <Route path="/:username/tournaments/:slug/draw" element={<DrawPage />} />
-        <Route path="/:username/tournaments/:slug/results" element={<ResultsPage />} />
-        <Route path="/:username/tournaments/:slug/standings" element={<StandingsPage />} />
+        <Route path="/tournament/:slug" element={<TournamentDashboard />} />
+        <Route path="/tournament/:slug/rounds" element={<DrawPage />} />
+        <Route path="/tournament/:slug/draw" element={<DrawPage />} />
+        <Route path="/tournament/:slug/results" element={<ResultsPage />} />
+        <Route path="/tournament/:slug/standings" element={<StandingsPage />} />
       </Routes>
     </AuthProvider>
   )

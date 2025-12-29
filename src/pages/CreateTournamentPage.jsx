@@ -104,7 +104,7 @@ export default function CreateTournamentPage() {
     // Mock slug generation
     const slug = form.name.toLowerCase().replace(/\s+/g, '-')
     // Navigate to payment page (to be created)
-    navigate(`/${username}/tournaments/${slug}/payment`)
+    navigate(`/tournament/${slug}/payment`)
   }
 
   if (!user) {
@@ -304,7 +304,7 @@ export default function CreateTournamentPage() {
             ))}
           </div>
 
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'flex-end' }}>
             <button type="button" onClick={handleSaveDraft} className="btn btn-secondary">
               Save as Draft
             </button>

@@ -43,13 +43,6 @@ export default function OrganizerDashboard() {
     }
   ]
 
-  // Calculate tournament statistics
-  const stats = {
-    active: recentTournaments.filter(t => t.status === 'Active').length,
-    saved: recentTournaments.filter(t => t.status === 'Saved').length,
-    completed: recentTournaments.filter(t => t.status === 'Completed').length
-  }
-
   return (
     <div className="organizer-dashboard-page">
       {/* Organizer Navbar */}
@@ -74,26 +67,13 @@ export default function OrganizerDashboard() {
           <Link to={`/${username}/tournaments/create`} className="btn btn-primary btn-large">
             Create New Tournament
           </Link>
-          <div className="tournament-stats">
-            <span className="stat-item">
-              <span className="stat-value status-active">{stats.active}</span> Active
-            </span>
-            <span className="stat-separator">•</span>
-            <span className="stat-item">
-              <span className="stat-value status-saved">{stats.saved}</span> Saved
-            </span>
-            <span className="stat-separator">•</span>
-            <span className="stat-item">
-              <span className="stat-value status-completed">{stats.completed}</span> Completed
-            </span>
-          </div>
         </div>
       </section>
 
       {/* Recent Tournaments Section */}
       <section className="recent-tournaments-section">
         <div className="section-header-row">
-          <h2>Your Tournaments</h2>
+          <h2>Recent Tournaments</h2>
           <Link to={`/${username}/tournaments`} className="btn btn-secondary">
             View All Tournaments
           </Link>
@@ -103,7 +83,7 @@ export default function OrganizerDashboard() {
           {recentTournaments.map(tournament => (
             <Link 
               key={tournament.id} 
-              to={`/${username}/tournaments/${tournament.slug}`}
+              to={`/tournament/${tournament.slug}`}
               className="tournament-list-item"
             >
               <div className="tournament-list-main">
@@ -134,32 +114,6 @@ export default function OrganizerDashboard() {
           ))}
         </div>
       </section>
-      {/* Footer */}
-            <footer className="landing-footer">
-              <div className="footer-content">
-                <div className="footer-brand">
-                  <div className="logo">
-                    <span >TourGanizer</span>
-                  </div>
-                  <p>Professional tournament management made simple</p>
-                </div>
-                <div className="footer-links">
-                  <div className="footer-column">
-                    <h4>Product</h4>
-                    <Link to="#">Features</Link>
-                    <Link to="#">Pricing</Link>
-                  </div>
-                  <div className="footer-column">
-                    <h4>Support</h4>
-                    <a href="#">Documentation</a>
-                    <a href="#">Contact</a>
-                  </div>
-                </div>
-              </div>
-              <div className="footer-bottom">
-                <p>© 2025 TourGanizer. All rights reserved.</p>
-              </div>
-            </footer>
     </div>
   )
 }
