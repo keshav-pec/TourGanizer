@@ -1,39 +1,128 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export default function TournamentDashboard() {
   const { slug } = useParams()
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const [tournament, setTournament] = useState(null)
+  const [teams, setTeams] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    fetchTournamentData()
+  }, [slug])
+
+  async function fetchTournamentData() {
+    try {
+      setLoading(true)
+
+      // Fetch tournament by slug
+      const { data: tournamentData, error: tournamentError } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('slug', slug)
+        .single()
+
+      if (tournamentError) throw tournamentError
+
+      setTournament(tournamentData)
+
+      // Fetch teams for this tournament
+      const { data: teamsData, error: teamsError } = await supabase
+        .from('teams')
+        .select('*')
+        .eq('tournament_id', tournamentData.id)
+        .order('name', { ascending: true })
+
+      if (teamsError) throw teamsError
+
+      setTeams(teamsData)
+    } catch (err) {
+      console.error('Error fetching tournament data:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function handleSignOut() {
     await signOut()
     navigate('/')
   }
 
-  // Mock tournament data - replace with Supabase query later
-  const tournament = {
-    name: 'National Debate Championship 2025',
-    format: 'British Parliamentary',
-    location: 'New York City',
-    date: 'Jan 15-18, 2025',
-    teams: 64,
-    status: 'Active'
+  function formatDate(dateString) {
+    if (!dateString) return 'Date TBD'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    })
   }
 
-  // Mock teams data - replace with Supabase query later
-  const teams = [
-    { id: 1, name: 'Team Alpha', members: ['John Doe', 'Jane Smith', 'Rakhesh Kumar', 'Murlidhar Singh'], status: 'Confirmed' },
-    { id: 2, name: 'Team Beta', members: ['Mike Johnson', 'Sarah Williams', 'Robert Brown', 'Emma Wilson'], status: 'Confirmed' },
-    { id: 3, name: 'Team Gamma', members: ['Chris Brown', 'Emily Davis', 'James Taylor', 'Olivia Martin'], status: 'Confirmed' },
-    { id: 4, name: 'Team Delta', members: ['David Wilson', 'Lisa Anderson', 'Michael Thompson', 'Sophia Garcia'], status: 'Pending' },
-  ]
+  function getTournamentStatus(date) {
+    if (!date) return 'Saved'
+    
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    const tournamentDate = new Date(date)
+    tournamentDate.setHours(0, 0, 0, 0)
+    
+    if (now < tournamentDate) return 'Saved'
+    if (now.getTime() === tournamentDate.getTime()) return 'Active'
+    if (now > tournamentDate) return 'Completed'
+    return 'Saved'
+  }
 
   const isInfoActive = location.pathname === `/tournament/${slug}`
   const isRoundsActive = location.pathname.includes('/rounds')
   const isStandingsActive = location.pathname.includes('/standings')
+
+  if (loading) {
+    return (
+      <>
+        <nav className="organizer-navbar">
+          <div className="nav-brand">
+            <Link to="/" className="logo">
+              <span className="logo-text">TourGanizer</span>
+            </Link>
+          </div>
+        </nav>
+        <div className="page" style={{ textAlign: 'center', padding: '3rem' }}>
+          Loading tournament...
+        </div>
+      </>
+    )
+  }
+
+  if (error || !tournament) {
+    return (
+      <>
+        <nav className="organizer-navbar">
+          <div className="nav-brand">
+            <Link to="/" className="logo">
+              <span className="logo-text">TourGanizer</span>
+            </Link>
+          </div>
+        </nav>
+        <div className="page" style={{ textAlign: 'center', padding: '3rem' }}>
+          <p style={{ color: 'var(--error-color)', marginBottom: '1rem' }}>
+            {error || 'Tournament not found'}
+          </p>
+          <Link to="/" className="btn btn-primary">
+            Back to Home
+          </Link>
+        </div>
+      </>
+    )
+  }
+
+  const status = getTournamentStatus(tournament.date)
 
   return (
     <>
@@ -76,44 +165,58 @@ export default function TournamentDashboard() {
           <div>
             <h1>{tournament.name}</h1>
             <p className="meta">
-              {tournament.format} • {tournament.location} • {tournament.date}
+              {formatDate(tournament.date)} • {tournament.time || 'Time TBD'}
             </p>
             <div style={{ marginTop: '1rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
               <div>
                 <span className="info-label">Total Teams: </span>
-                <span className="info-value">{tournament.teams}</span>
+                <span className="info-value">{teams.length}</span>
+              </div>
+              <div>
+                <span className="info-label">Rounds: </span>
+                <span className="info-value">{tournament.rounds}</span>
+              </div>
+              <div>
+                <span className="info-label">Out-Rounds: </span>
+                <span className="info-value">{tournament.out_rounds}</span>
               </div>
               <div>
                 <span className="info-label">Status: </span>
-                <span className={`status-badge status-${tournament.status.toLowerCase()}`}>
-                  {tournament.status}
+                <span className={`status-badge status-${status.toLowerCase()}`}>
+                  {status}
                 </span>
               </div>
             </div>
           </div>
-          <Link to={`/${user?.username}/tournaments`} className="btn btn-secondary">
+          <Link to={`/${user?.user_metadata?.username}/tournaments`} className="btn btn-secondary">
             Back to Tournaments
           </Link>
         </div>
 
         <div className="tournament-info-section">
           <div className="info-card">
-            <h3>Registered Teams</h3>
-            <div className="teams-list">
-              {teams.map(team => (
-                <div key={team.id} className="team-item">
-                  <span className="team-name">{team.name} : </span>
-                  <span className="team-members-inline">
-                    {team.members.map((member, idx) => (
-                      <React.Fragment key={idx}>
-                        <span className="member-name-item">{member}</span>
-                        {idx < team.members.length - 1 && <span className="member-separator">, </span>}
-                      </React.Fragment>
-                    ))}
-                  </span>
-                </div>
-              ))}
-            </div>
+            <h3>Registered Teams ({teams.length})</h3>
+            {teams.length === 0 ? (
+              <p style={{ color: 'var(--gray-600)', padding: '2rem', textAlign: 'center' }}>
+                No teams registered yet.
+              </p>
+            ) : (
+              <div className="teams-list">
+                {teams.map(team => (
+                  <div key={team.id} className="team-item">
+                    <span className="team-name">{team.name}: </span>
+                    <span className="team-members-inline">
+                      {team.members.map((member, idx) => (
+                        <React.Fragment key={idx}>
+                          <span className="member-name-item">{member.name}</span>
+                          {idx < team.members.length - 1 && <span className="member-separator">, </span>}
+                        </React.Fragment>
+                      ))}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

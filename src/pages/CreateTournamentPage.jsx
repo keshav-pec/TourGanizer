@@ -84,10 +84,11 @@ export default function CreateTournamentPage() {
         .insert([{
           slug: slug,
           name: form.name,
-          location: '', // Add location field if needed
-          format: `${form.rounds} rounds, ${form.outRounds} out-rounds`,
-          start_date: form.date,
-          end_date: form.date,
+          date: form.date,
+          time: form.time,
+          rounds: parseInt(form.rounds),
+          out_rounds: parseInt(form.outRounds),
+          members_per_team: parseInt(form.membersPerTeam),
           created_by: user.id
         }])
         .select()
@@ -150,10 +151,11 @@ export default function CreateTournamentPage() {
         .insert([{
           slug: slug,
           name: form.name,
-          location: '', // Add location field if needed
-          format: `${form.rounds} rounds, ${form.outRounds} out-rounds`,
-          start_date: form.date,
-          end_date: form.date,
+          date: form.date,
+          time: form.time,
+          rounds: parseInt(form.rounds),
+          out_rounds: parseInt(form.outRounds),
+          members_per_team: parseInt(form.membersPerTeam),
           created_by: user.id
         }])
         .select()
