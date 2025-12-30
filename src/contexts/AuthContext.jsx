@@ -81,10 +81,12 @@ export function AuthProvider({ children }) {
   }
 
   async function signInWithGoogle() {
+    const redirectUrl = window.location.origin // Dynamically gets http://localhost:5173 or https://tourganizer.vercel.app
+    
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`
+        redirectTo: `${redirectUrl}/auth/callback`
       }
     })
     

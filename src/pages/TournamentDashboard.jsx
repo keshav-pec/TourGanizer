@@ -13,6 +13,7 @@ export default function TournamentDashboard() {
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [isDemo, setIsDemo] = useState(false)
 
   useEffect(() => {
     fetchTournamentData()
@@ -78,6 +79,7 @@ export default function TournamentDashboard() {
 
       if (demoTournaments[slug]) {
         // Use demo data
+        setIsDemo(true)
         setTournament(demoTournaments[slug])
         setTeams(demoTeams[slug] || [])
         setLoading(false)
@@ -156,10 +158,10 @@ export default function TournamentDashboard() {
   ]
 
   const navActionItems = user ? [
-    { to: `/${organizerName}`, label: 'Dashboard', className: 'btn btn-text', type: 'link' },
+    { to: isDemo ? '/Demo/tournaments' : `/${organizerName}`, label: 'Dashboard', className: 'nav-link-style', type: 'link' },
     { label: 'Sign Out', className: 'btn btn-secondary', type: 'button', onClick: handleSignOut }
   ] : [
-    { to: '/signup', label: 'Get Started', className: 'btn btn-secondary', type: 'link' },
+    { to: '/signup', label: 'Get Started', className: 'nav-link-style', type: 'link' },
     { to: '/signin', label: 'Login', className: 'btn btn-primary', type: 'link' }
   ]
 
@@ -236,7 +238,7 @@ export default function TournamentDashboard() {
         <div className="nav-actions">
           {user ? (
             <>
-              <Link to={`/${organizerName}`} className="btn btn-text" style={{marginRight: '0.5rem'}}>
+              <Link to={isDemo ? '/Demo/tournaments' : `/${organizerName}`} className="nav-link-style">
                 Dashboard
               </Link>
               <button className="btn btn-secondary" onClick={handleSignOut}>
@@ -245,7 +247,7 @@ export default function TournamentDashboard() {
             </>
           ) : (
             <>
-              <Link to="/signup" className="btn btn-secondary" style={{marginRight: '0.5rem'}}>
+              <Link to="/signup" className="nav-link-style">
                 Get Started
               </Link>
               <Link to="/signin" className="btn btn-primary">

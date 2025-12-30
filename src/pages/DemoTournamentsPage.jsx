@@ -73,7 +73,7 @@ export default function DemoTournamentsPage() {
         <div className="nav-actions">
           {user ? (
             <>
-              <Link to={`/${organizerName}`} className="btn btn-text" style={{marginRight: '0.5rem'}}>
+              <Link to="/Demo/tournaments" className="nav-link-style">
                 Dashboard
               </Link>
               <button className="btn btn-secondary" onClick={handleSignOut}>
@@ -82,7 +82,7 @@ export default function DemoTournamentsPage() {
             </>
           ) : (
             <>
-              <Link to="/signup" className="btn btn-secondary" style={{marginRight: '0.5rem'}}>
+              <Link to="/signup" className="nav-link-style">
                 Get Started
               </Link>
               <Link to="/signin" className="btn btn-primary">

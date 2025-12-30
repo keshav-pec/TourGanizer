@@ -24,12 +24,12 @@ export default function HomePage() {
         <div className="landing-nav-actions">
           {user ? (
             <>
-              <Link to={`/${organizerName}`} className="btn btn-secondary" style={{border:'0px'}}>Dashboard</Link>
+              <Link to={`/${organizerName}`} className="nav-link-style">Dashboard</Link>
               <button onClick={handleSignOut} className="btn btn-primary">Sign Out</button>
             </>
           ) : (
             <>
-              <Link to="/signup" className="btn btn-secondary" style={{border:'0px'}}>Get Started</Link>
+              <Link to="/signup" className="nav-link-style">Get Started</Link>
               <Link to="/signin" className="btn btn-primary">Login</Link>
             </>
           )}

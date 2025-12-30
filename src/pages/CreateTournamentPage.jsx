@@ -221,7 +221,7 @@ export default function CreateTournamentPage() {
           </Link>
         </div>
         <div className="nav-actions">
-          <Link to={`/${username}`} className="btn btn-text" style={{marginRight: '0.5rem'}}>
+          <Link to={`/${username}`} className="nav-link-style">
             Dashboard
           </Link>
           <button className="btn btn-secondary" onClick={handleSignOut}>

@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import SignInPage from './pages/SignInPage'
 import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/LoginPage'
+import AuthCallback from './pages/AuthCallback'
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import TournamentsPage from './pages/TournamentsPage'
 import DemoTournamentsPage from './pages/DemoTournamentsPage'
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/auth/callback" element={<AuthCallback />} />
         <Route path="/Demo/tournaments" element={<DemoTournamentsPage />} />
         <Route path="/:username" element={<OrganizerDashboard />} />
         <Route path="/:username/tournaments" element={<TournamentsPage />} />

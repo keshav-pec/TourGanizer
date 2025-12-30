@@ -98,7 +98,7 @@ export default function TournamentsPage() {
           </Link>
         </div>
         <div className="nav-actions">
-          <Link to={`/${username}`} className="btn btn-text">
+          <Link to={`/${username}`} className="nav-link-style">
             Dashboard
           </Link>
           <button className="btn btn-secondary" onClick={handleSignOut}>
