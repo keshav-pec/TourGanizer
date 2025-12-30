@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import Footer from '../components/Footer'
 
 export default function OrganizerDashboard() {
   const { username } = useParams()
@@ -167,6 +168,8 @@ export default function OrganizerDashboard() {
           </div>
         )}
       </section>
+
+      <Footer />
     </div>
   )
 }
