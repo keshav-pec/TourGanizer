@@ -2103,11 +2103,13 @@ table tr:hover {
   position: relative;
   display: flex;
   align-items: center;
+  gap: 0.5rem;
 }
 
 .password-input-wrapper .password-input {
   padding-right: 4rem !important;
   width: 100%;
+  flex: 1;
 }
 
 .password-toggle-btn {
@@ -2123,7 +2125,6 @@ table tr:hover {
   align-items: center;
   justify-content: center;
   z-index: 10;
-  pointer-events: auto;
 }
 
 .password-toggle-btn:hover {
@@ -2132,4 +2133,21 @@ table tr:hover {
 
 .password-toggle-btn:focus {
   outline: none;
+}
+
+/* Mobile/Touch: Move toggle outside input */
+@media (max-width: 640px) {
+  .password-input-wrapper {
+    gap: 0.5rem;
+  }
+
+  .password-input-wrapper .password-input {
+    padding-right: 1rem !important;
+  }
+
+  .password-toggle-btn {
+    position: static;
+    padding: 0.5rem;
+    flex-shrink: 0;
+  }
 }
