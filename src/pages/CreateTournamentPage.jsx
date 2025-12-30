@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export default function CreateTournamentPage() {
   const { username } = useParams()
@@ -20,6 +21,8 @@ export default function CreateTournamentPage() {
       members: [{ name: '', email: '' }] 
     }
   ])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
   async function handleSignOut() {
     await signOut()
@@ -68,43 +71,134 @@ export default function CreateTournamentPage() {
 
   async function handleSaveDraft(e) {
     e.preventDefault()
-    // TODO: Replace with Supabase insert with status 'draft'
-    // const { data, error } = await supabase.from('tournaments').insert([{ 
-    //   name: form.name, 
-    //   date: form.date,
-    //   time: form.time,
-    //   rounds: form.rounds,
-    //   out_rounds: form.outRounds,
-    //   members_per_team: form.membersPerTeam,
-    //   status: 'draft',
-    //   created_by: user.id 
-    // }])
-    // Then insert teams and members
-    
-    // Mock slug generation
-    const slug = form.name.toLowerCase().replace(/\s+/g, '-')
-    // Navigate to tournaments page or dashboard
-    navigate(`/${username}/tournaments`)
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Generate slug from tournament name
+      const slug = form.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      
+      // Insert tournament
+      const { data: tournament, error: tournamentError } = await supabase
+        .from('tournaments')
+        .insert([{
+          slug: slug,
+          name: form.name,
+          location: '', // Add location field if needed
+          format: `${form.rounds} rounds, ${form.outRounds} out-rounds`,
+          start_date: form.date,
+          end_date: form.date,
+          created_by: user.id
+        }])
+        .select()
+        .single()
+
+      if (tournamentError) throw tournamentError
+
+      // Insert teams with members
+      const teamsData = teams.map(team => ({
+        tournament_id: tournament.id,
+        name: team.name,
+        members: team.members, // jsonb array
+        created_by: user.id
+      }))
+
+      const { error: teamsError } = await supabase
+        .from('teams')
+        .insert(teamsData)
+
+      if (teamsError) throw teamsError
+
+      // Create rounds
+      const roundsData = []
+      for (let i = 1; i <= parseInt(form.rounds); i++) {
+        roundsData.push({
+          tournament_id: tournament.id,
+          round_number: i,
+          created_by: user.id
+        })
+      }
+
+      const { error: roundsError } = await supabase
+        .from('rounds')
+        .insert(roundsData)
+
+      if (roundsError) throw roundsError
+
+      // Navigate to tournaments page
+      navigate(`/${username}/tournaments`)
+    } catch (err) {
+      console.error('Error creating tournament:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   async function handleContinueToPayment(e) {
     e.preventDefault()
-    // TODO: Replace with Supabase insert
-    // const { data, error } = await supabase.from('tournaments').insert([{ 
-    //   name: form.name, 
-    //   date: form.date,
-    //   time: form.time,
-    //   rounds: form.rounds,
-    //   out_rounds: form.outRounds,
-    //   members_per_team: form.membersPerTeam,
-    //   created_by: user.id 
-    // }])
-    // Then insert teams and members
-    
-    // Mock slug generation
-    const slug = form.name.toLowerCase().replace(/\s+/g, '-')
-    // Navigate to payment page (to be created)
-    navigate(`/tournament/${slug}/payment`)
+    setLoading(true)
+    setError(null)
+
+    try {
+      // Generate slug from tournament name
+      const slug = form.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '')
+      
+      // Insert tournament
+      const { data: tournament, error: tournamentError } = await supabase
+        .from('tournaments')
+        .insert([{
+          slug: slug,
+          name: form.name,
+          location: '', // Add location field if needed
+          format: `${form.rounds} rounds, ${form.outRounds} out-rounds`,
+          start_date: form.date,
+          end_date: form.date,
+          created_by: user.id
+        }])
+        .select()
+        .single()
+
+      if (tournamentError) throw tournamentError
+
+      // Insert teams with members
+      const teamsData = teams.map(team => ({
+        tournament_id: tournament.id,
+        name: team.name,
+        members: team.members, // jsonb array
+        created_by: user.id
+      }))
+
+      const { error: teamsError } = await supabase
+        .from('teams')
+        .insert(teamsData)
+
+      if (teamsError) throw teamsError
+
+      // Create rounds
+      const roundsData = []
+      for (let i = 1; i <= parseInt(form.rounds); i++) {
+        roundsData.push({
+          tournament_id: tournament.id,
+          round_number: i,
+          created_by: user.id
+        })
+      }
+
+      const { error: roundsError } = await supabase
+        .from('rounds')
+        .insert(roundsData)
+
+      if (roundsError) throw roundsError
+
+      // Navigate to payment page (to be created)
+      navigate(`/tournament/${slug}/payment`)
+    } catch (err) {
+      console.error('Error creating tournament:', err)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!user) {
@@ -304,12 +398,14 @@ export default function CreateTournamentPage() {
             ))}
           </div>
 
+          {error && <div className="error-message" style={{ marginTop: '1rem' }}>{error}</div>}
+
           <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem', justifyContent: 'flex-end' }}>
-            <button type="button" onClick={handleSaveDraft} className="btn btn-secondary">
-              Save as Draft
+            <button type="button" onClick={handleSaveDraft} className="btn btn-secondary" disabled={loading}>
+              {loading ? 'Saving...' : 'Save as Draft'}
             </button>
-            <button type="button" onClick={handleContinueToPayment} className="btn btn-primary">
-              Continue to Payment
+            <button type="button" onClick={handleContinueToPayment} className="btn btn-primary" disabled={loading}>
+              {loading ? 'Creating...' : 'Continue to Payment'}
             </button>
           </div>
         </form>
