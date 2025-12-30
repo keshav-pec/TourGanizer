@@ -206,7 +206,7 @@ export default function CreateTournamentPage() {
   if (!user) {
     return (
       <div className="page">
-        <p>Please <Link to="/login">sign in</Link> to create a tournament.</p>
+        <p>Please <Link to="/signin">sign in</Link> to create a tournament.</p>
       </div>
     )
   }

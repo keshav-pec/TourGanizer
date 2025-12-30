@@ -12,6 +12,7 @@ export default function StandingsPage() {
   const [tournament, setTournament] = useState(null)
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isDemo, setIsDemo] = useState(false)
   const [standings, setStandings] = useState([
     { rank: 1, team: 'Team Alpha', wins: 3, losses: 0, points: 9 },
     { rank: 2, team: 'Team Gamma', wins: 2, losses: 1, points: 6 },
@@ -56,6 +57,7 @@ export default function StandingsPage() {
       }
 
       if (demoTournaments[slug]) {
+        setIsDemo(true)
         setTournament(demoTournaments[slug])
         setTeams([]) // Demo tournaments don't need full team data here
         setLoading(false)

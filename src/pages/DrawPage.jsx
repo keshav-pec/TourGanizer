@@ -12,6 +12,7 @@ export default function DrawPage() {
   const [tournament, setTournament] = useState(null)
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(true)
+  const [isDemo, setIsDemo] = useState(false)
   const [rounds, setRounds] = useState([
     { round: 1, matches: [
       { room: 'Room A', team1: 'Team Alpha', team2: 'Team Beta', adjudicator: 'Judge Smith' },
@@ -56,6 +57,7 @@ export default function DrawPage() {
       }
 
       if (demoTournaments[slug]) {
+        setIsDemo(true)
         setTournament(demoTournaments[slug])
         setTeams([]) // Demo tournaments don't need full team data here
         setLoading(false)
