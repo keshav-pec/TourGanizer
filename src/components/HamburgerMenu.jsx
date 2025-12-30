@@ -53,6 +53,12 @@ export default function HamburgerMenu({ navCenterItems, navActionItems }) {
 
       {/* Mobile Menu */}
       <div className={`mobile-menu ${isOpen ? 'active' : ''}`}>
+        <div className="mobile-menu-header">
+          <Link to="/" className="logo" onClick={closeMenu}>
+            <span className="logo-text">TourGanizer</span>
+          </Link>
+        </div>
+
         <div className="mobile-menu-content">
           {/* Navigation Center Items */}
           {navCenterItems && navCenterItems.length > 0 && (

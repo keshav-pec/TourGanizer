@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import HamburgerMenu from '../components/HamburgerMenu'
 import Footer from '../components/Footer'
 
 export default function OrganizerDashboard() {
@@ -95,6 +96,13 @@ export default function OrganizerDashboard() {
             Sign Out
           </button>
         </div>
+        <HamburgerMenu
+          navCenterItems={[]}
+          navActionItems={[
+            { to: `/${username}`, label: 'Dashboard', className: 'nav-link-style', type: 'link' },
+            { label: 'Sign Out', className: 'btn btn-secondary', type: 'button', onClick: handleSignOut }
+          ]}
+        />
       </nav>
 
       {/* Hero Section */}

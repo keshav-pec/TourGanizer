@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import HamburgerMenu from '../components/HamburgerMenu'
 import Footer from '../components/Footer'
 
 export default function TournamentsPage() {
@@ -106,6 +107,13 @@ export default function TournamentsPage() {
             Sign Out
           </button>
         </div>
+        <HamburgerMenu
+          navCenterItems={[]}
+          navActionItems={[
+            { to: `/${username}`, label: 'Dashboard', className: 'nav-link-style', type: 'link' },
+            { label: 'Sign Out', className: 'btn btn-secondary', type: 'button', onClick: handleSignOut }
+          ]}
+        />
       </nav>
 
       <div className="page">
@@ -133,13 +141,12 @@ export default function TournamentsPage() {
           </div>
         ) : (
           <div className="tournaments-list">
-            {tournaments.map(tournament => {
+            {tournaments.map((tournament) => {
               const status = getTournamentStatus(tournament.date)
-              
               return (
-                <Link 
-                  key={tournament.id} 
-                  to={`/tournament/${tournament.slug}`}
+                <Link
+                  key={tournament.id || tournament.slug}
+                  to={`/tournament/${tournament.slug || tournament.id}`}
                   className="tournament-list-item"
                 >
                   <div className="tournament-list-main">

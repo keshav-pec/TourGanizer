@@ -160,7 +160,7 @@ export default function StandingsPage() {
   const status = getTournamentStatus(tournament.date)
 
   return (
-    <>
+    <div className="organizer-dashboard-page">
       {/* Organizer Navbar */}
       <nav className="organizer-navbar">
         <div className="nav-brand">
@@ -270,6 +270,6 @@ export default function StandingsPage() {
 
       {/* Footer */}
       <Footer />
-    </>
+    </div>
   )
 }

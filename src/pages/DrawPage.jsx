@@ -160,7 +160,7 @@ export default function DrawPage() {
   const status = getTournamentStatus(tournament.date)
 
   return (
-    <>
+    <div className="organizer-dashboard-page">
       {/* Tournament Navbar */}
       <nav className="organizer-navbar">
         <div className="nav-brand">
@@ -273,6 +273,6 @@ export default function DrawPage() {
 
       {/* Footer */}
       <Footer />
-    </>
+    </div>
   )
 }
