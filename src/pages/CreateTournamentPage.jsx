@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import Footer from '../components/Footer'
 
 export default function CreateTournamentPage() {
   const { username } = useParams()
