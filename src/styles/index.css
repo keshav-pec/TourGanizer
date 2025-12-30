@@ -1891,4 +1891,243 @@ table tr:hover {
     padding: 0.5rem;
     width: 100%;
   }
+
+  /* Tournament Dashboard Mobile Styles */
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .page-header .meta {
+    font-size: 0.875rem;
+  }
+
+  .info-card {
+    padding: 1rem;
+  }
+
+  .info-card h3 {
+    font-size: 1rem;
+  }
+
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    padding: 0.625rem 0;
+  }
+
+  .info-label,
+  .info-value {
+    font-size: 0.875rem;
+  }
+
+  .teams-list {
+    padding: 0;
+  }
+
+  .team-item {
+    padding: 0.75rem 0;
+  }
+
+  .team-name {
+    font-size: 0.875rem;
+  }
+
+  .team-members {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+  }
+
+  /* Rounds and Standings Tables */
+  .rounds-table,
+  .standings-table {
+    overflow-x: auto;
+    display: block;
+  }
+
+  .rounds-table table,
+  .standings-table table {
+    min-width: 600px;
+  }
+}
+
+/* Hamburger Menu Styles */
+.hamburger-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  z-index: 101;
+}
+
+.hamburger-menu span {
+  width: 24px;
+  height: 2px;
+  background: var(--gray-800);
+  transition: all 0.3s ease;
+  border-radius: 2px;
+}
+
+.hamburger-menu.active span:nth-child(1) {
+  transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger-menu.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-menu.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+
+.mobile-menu-overlay.active {
+  display: block;
+}
+
+/* Mobile Menu */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 280px;
+  height: 100vh;
+  background: white;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  transition: right 0.3s ease;
+  z-index: 100;
+  padding: 5rem 1.5rem 1.5rem;
+  overflow-y: auto;
+}
+
+.mobile-menu.active {
+  right: 0;
+}
+
+.mobile-menu-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-menu-section {
+  margin-bottom: 1.5rem;
+}
+
+.mobile-menu-section h4 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-menu .nav-btn,
+.mobile-menu .btn {
+  width: 100%;
+  text-align: left;
+  justify-content: flex-start;
+  padding: 0.875rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mobile-menu .nav-btn:last-child,
+.mobile-menu .btn:last-child {
+  margin-bottom: 0;
+}
+
+/* Mobile Navigation Breakpoint */
+@media (max-width: 768px) {
+  .organizer-navbar .nav-center,
+  .organizer-navbar .nav-actions {
+    display: none;
+  }
+
+  .hamburger-menu {
+    display: flex;
+  }
+
+  .organizer-navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .organizer-navbar .nav-brand .logo {
+    font-size: 1.25rem;
+  }
+}
+
+/* Tablet Breakpoint - Show full navbar on tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .organizer-navbar {
+    padding: 1rem 1.5rem;
+  }
+
+  .organizer-navbar .nav-center {
+    gap: 0.25rem;
+  }
+
+  .organizer-navbar .nav-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .organizer-navbar .nav-actions {
+    gap: 0.5rem;
+  }
+
+  .organizer-navbar .nav-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* Password input with toggle button inside */
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .password-input {
+  padding-right: 4rem !important;
+  width: 100%;
+}
+
+.password-toggle-btn {
+  position: absolute;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  color: var(--gray-600);
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle-btn:hover {
+  color: var(--primary);
+}
+
+.password-toggle-btn:focus {
+  outline: none;
 }

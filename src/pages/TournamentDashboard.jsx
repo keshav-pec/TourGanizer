@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import HamburgerMenu from '../components/HamburgerMenu'
 
 export default function TournamentDashboard() {
   const { slug } = useParams()
@@ -147,6 +148,21 @@ export default function TournamentDashboard() {
   const isRoundsActive = location.pathname.includes('/rounds')
   const isStandingsActive = location.pathname.includes('/standings')
 
+  // Prepare nav items for hamburger menu
+  const navCenterItems = [
+    { to: `/tournament/${slug}`, label: 'Info', isActive: isInfoActive },
+    { to: `/tournament/${slug}/rounds`, label: 'Rounds', isActive: isRoundsActive },
+    { to: `/tournament/${slug}/standings`, label: 'Standings', isActive: isStandingsActive }
+  ]
+
+  const navActionItems = user ? [
+    { to: `/${organizerName}`, label: 'Dashboard', className: 'btn btn-text', type: 'link' },
+    { label: 'Sign Out', className: 'btn btn-secondary', type: 'button', onClick: handleSignOut }
+  ] : [
+    { to: '/signup', label: 'Get Started', className: 'btn btn-secondary', type: 'link' },
+    { to: '/signin', label: 'Login', className: 'btn btn-primary', type: 'link' }
+  ]
+
   if (loading) {
     return (
       <>
@@ -238,6 +254,7 @@ export default function TournamentDashboard() {
             </>
           )}
         </div>
+        <HamburgerMenu navCenterItems={navCenterItems} navActionItems={navActionItems} />
       </nav>
 
       <div className="page">
