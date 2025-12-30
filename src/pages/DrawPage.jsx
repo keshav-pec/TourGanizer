@@ -242,26 +242,28 @@ export default function DrawPage() {
         {rounds.map(r => (
           <div key={r.round} className="round-section">
             <h2>Round {r.round}</h2>
-            <table className="draw-table">
-              <thead>
-                <tr>
-                  <th>Room</th>
-                  <th>Affirmative</th>
-                  <th>Negative</th>
-                  <th>Adjudicator</th>
-                </tr>
-              </thead>
-              <tbody>
-                {r.matches.map((m, i) => (
-                  <tr key={i}>
-                    <td>{m.room}</td>
-                    <td>{m.team1}</td>
-                    <td>{m.team2}</td>
-                    <td>{m.adjudicator}</td>
+            <div className="rounds-table">
+              <table className="draw-table">
+                <thead>
+                  <tr>
+                    <th>Room</th>
+                    <th>Affirmative</th>
+                    <th>Negative</th>
+                    <th>Adjudicator</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {r.matches.map((m, i) => (
+                    <tr key={i}>
+                      <td>{m.room}</td>
+                      <td>{m.team1}</td>
+                      <td>{m.team2}</td>
+                      <td>{m.adjudicator}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         ))}
       </div>

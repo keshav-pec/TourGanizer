@@ -1942,14 +1942,53 @@ table tr:hover {
 
   /* Rounds and Standings Tables */
   .rounds-table,
-  .standings-table {
+  .standings-table-wrapper {
     overflow-x: auto;
     display: block;
+    -webkit-overflow-scrolling: touch;
   }
 
   .rounds-table table,
-  .standings-table table {
+  .standings-table-wrapper table {
     min-width: 600px;
+  }
+
+  .draw-table {
+    width: 100%;
+  }
+
+  .standings-table {
+    width: 100%;
+  }
+}
+
+/* Compact table styling for tournament pages */
+.draw-table th,
+.draw-table td,
+.standings-table th,
+.standings-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+}
+
+.draw-table th,
+.standings-table th {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 768px) {
+  .draw-table th,
+  .draw-table td,
+  .standings-table th,
+  .standings-table td {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .draw-table th,
+  .standings-table th {
+    font-size: 0.8125rem;
   }
 }
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { supabase } from '../lib/supabase'
+import HamburgerMenu from '../components/HamburgerMenu'
 
 export default function StandingsPage() {
   const { slug } = useParams()
@@ -121,6 +122,21 @@ export default function StandingsPage() {
   const isRoundsActive = location.pathname.includes('/rounds')
   const isStandingsActive = location.pathname.includes('/standings')
 
+  // Prepare nav items for hamburger menu
+  const navCenterItems = [
+    { to: `/tournament/${slug}`, label: 'Info', isActive: isInfoActive },
+    { to: `/tournament/${slug}/rounds`, label: 'Rounds', isActive: isRoundsActive },
+    { to: `/tournament/${slug}/standings`, label: 'Standings', isActive: isStandingsActive }
+  ]
+
+  const navActionItems = user ? [
+    { to: `/${organizerName}`, label: 'Dashboard', className: 'btn btn-text', type: 'link' },
+    { label: 'Sign Out', className: 'btn btn-secondary', type: 'button', onClick: handleSignOut }
+  ] : [
+    { to: '/signup', label: 'Get Started', className: 'btn btn-secondary', type: 'link' },
+    { to: '/signin', label: 'Login', className: 'btn btn-primary', type: 'link' }
+  ]
+
   if (loading || !tournament) {
     return (
       <>
@@ -190,6 +206,7 @@ export default function StandingsPage() {
             </>
           )}
         </div>
+        <HamburgerMenu navCenterItems={navCenterItems} navActionItems={navActionItems} />
       </nav>
 
       <div className="page">
@@ -222,28 +239,30 @@ export default function StandingsPage() {
           </div>
         </div>
         
-        <table className="standings-table">
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Team</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>Points</th>
-            </tr>
-          </thead>
-          <tbody>
-            {standings.map(s => (
-              <tr key={s.rank}>
-                <td className="rank">#{s.rank}</td>
-                <td className="team-name">{s.team}</td>
-                <td>{s.wins}</td>
-                <td>{s.losses}</td>
-                <td className="points">{s.points}</td>
+        <div className="standings-table-wrapper">
+          <table className="standings-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Team</th>
+                <th>Wins</th>
+                <th>Losses</th>
+                <th>Points</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {standings.map(s => (
+                <tr key={s.rank}>
+                  <td className="rank">#{s.rank}</td>
+                  <td className="team-name">{s.team}</td>
+                  <td>{s.wins}</td>
+                  <td>{s.losses}</td>
+                  <td className="points">{s.points}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Footer */}
