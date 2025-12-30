@@ -21,6 +21,68 @@ export default function TournamentDashboard() {
     try {
       setLoading(true)
 
+      // Check if this is a demo tournament
+      const demoTournaments = {
+        'national-debate-championship-2025': {
+          id: 'demo-1',
+          slug: 'national-debate-championship-2025',
+          name: 'National Debate Championship 2025',
+          date: '2025-03-15',
+          time: '09:00',
+          rounds: 5,
+          out_rounds: 2,
+          members_per_team: 4,
+          created_by: null
+        },
+        'regional-debate-series-spring': {
+          id: 'demo-2',
+          slug: 'regional-debate-series-spring',
+          name: 'Regional Debate Series - Spring',
+          date: '2025-04-20',
+          time: '10:00',
+          rounds: 4,
+          out_rounds: 1,
+          members_per_team: 3,
+          created_by: null
+        },
+        'inter-university-championship': {
+          id: 'demo-3',
+          slug: 'inter-university-championship',
+          name: 'Inter-University Championship',
+          date: '2024-12-10',
+          time: '08:30',
+          rounds: 6,
+          out_rounds: 3,
+          members_per_team: 4,
+          created_by: null
+        }
+      }
+
+      const demoTeams = {
+        'national-debate-championship-2025': [
+          { id: 1, name: 'Team Alpha', members: [{ name: 'John Doe' }, { name: 'Jane Smith' }, { name: 'Robert Brown' }, { name: 'Emma Wilson' }] },
+          { id: 2, name: 'Team Beta', members: [{ name: 'Mike Johnson' }, { name: 'Sarah Williams' }, { name: 'Chris Davis' }, { name: 'Lisa Anderson' }] },
+          { id: 3, name: 'Team Gamma', members: [{ name: 'David Miller' }, { name: 'Emily Taylor' }, { name: 'James Moore' }, { name: 'Sophia Garcia' }] },
+        ],
+        'regional-debate-series-spring': [
+          { id: 1, name: 'City Debaters', members: [{ name: 'Alex Chen' }, { name: 'Maria Rodriguez' }, { name: 'Tom Wilson' }] },
+          { id: 2, name: 'University Stars', members: [{ name: 'Sam Lee' }, { name: 'Nina Patel' }, { name: 'Jack Brown' }] },
+        ],
+        'inter-university-championship': [
+          { id: 1, name: 'Harvard Red', members: [{ name: 'Oliver Smith' }, { name: 'Emma Johnson' }, { name: 'Noah Williams' }, { name: 'Ava Brown' }] },
+          { id: 2, name: 'Yale Blue', members: [{ name: 'Liam Jones' }, { name: 'Isabella Garcia' }, { name: 'Mason Miller' }, { name: 'Sophia Davis' }] },
+          { id: 3, name: 'Princeton Orange', members: [{ name: 'Ethan Martinez' }, { name: 'Mia Rodriguez' }, { name: 'Lucas Wilson' }, { name: 'Charlotte Moore' }] },
+        ]
+      }
+
+      if (demoTournaments[slug]) {
+        // Use demo data
+        setTournament(demoTournaments[slug])
+        setTeams(demoTeams[slug] || [])
+        setLoading(false)
+        return
+      }
+
       // Fetch tournament by slug
       const { data: tournamentData, error: tournamentError } = await supabase
         .from('tournaments')
@@ -54,6 +116,8 @@ export default function TournamentDashboard() {
     await signOut()
     navigate('/')
   }
+
+  const organizerName = user?.user_metadata?.username || user?.email?.split('@')[0] || 'organizer'
 
   function formatDate(dateString) {
     if (!dateString) return 'Date TBD'
@@ -154,9 +218,25 @@ export default function TournamentDashboard() {
           </Link>
         </div>
         <div className="nav-actions">
-          <button className="btn btn-secondary" onClick={handleSignOut}>
-            Sign Out
-          </button>
+          {user ? (
+            <>
+              <Link to={`/${organizerName}`} className="btn btn-text" style={{marginRight: '0.5rem'}}>
+                Dashboard
+              </Link>
+              <button className="btn btn-secondary" onClick={handleSignOut}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/signup" className="btn btn-secondary" style={{marginRight: '0.5rem'}}>
+                Get Started
+              </Link>
+              <Link to="/signin" className="btn btn-primary">
+                Login
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -188,9 +268,6 @@ export default function TournamentDashboard() {
               </div>
             </div>
           </div>
-          <Link to={`/${user?.user_metadata?.username}/tournaments`} className="btn btn-secondary">
-            Back to Tournaments
-          </Link>
         </div>
 
         <div className="tournament-info-section">
@@ -206,9 +283,9 @@ export default function TournamentDashboard() {
                   <div key={team.id} className="team-item">
                     <span className="team-name">{team.name}: </span>
                     <span className="team-members-inline">
-                      {team.members.map((member, idx) => (
+                      {Array.isArray(team.members) && team.members.map((member, idx) => (
                         <React.Fragment key={idx}>
-                          <span className="member-name-item">{member.name}</span>
+                          <span className="member-name-item">{member.name || member}</span>
                           {idx < team.members.length - 1 && <span className="member-separator">, </span>}
                         </React.Fragment>
                       ))}

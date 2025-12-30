@@ -7,6 +7,7 @@ import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/LoginPage'
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import TournamentsPage from './pages/TournamentsPage'
+import DemoTournamentsPage from './pages/DemoTournamentsPage'
 import CreateTournamentPage from './pages/CreateTournamentPage'
 import TournamentDashboard from './pages/TournamentDashboard'
 import DrawPage from './pages/DrawPage'
@@ -21,6 +22,7 @@ export default function App() {
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/Demo/tournaments" element={<DemoTournamentsPage />} />
         <Route path="/:username" element={<OrganizerDashboard />} />
         <Route path="/:username/tournaments" element={<TournamentsPage />} />
         <Route path="/:username/tournaments/create" element={<CreateTournamentPage />} />

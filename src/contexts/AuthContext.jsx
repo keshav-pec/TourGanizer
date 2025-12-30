@@ -70,9 +70,14 @@ export function AuthProvider({ children }) {
   }
 
   async function signOut() {
-    const { error } = await supabase.auth.signOut()
-    if (error) throw error
-    setUser(null)
+    try {
+      const { error } = await supabase.auth.signOut()
+      if (error) console.error('Error signing out:', error)
+    } catch (err) {
+      console.error('Error signing out:', err)
+    } finally {
+      setUser(null)
+    }
   }
 
   async function signInWithGoogle() {

@@ -1,22 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export default function StandingsPage() {
   const { slug } = useParams()
   const { user, signOut } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-
-  async function handleSignOut() {
-    await signOut()
-    navigate('/')
-  }
-
-  const isInfoActive = location.pathname === `/tournament/${slug}`
-  const isRoundsActive = location.pathname.includes('/rounds')
-  const isStandingsActive = location.pathname.includes('/standings')
-
+  const [tournament, setTournament] = useState(null)
+  const [teams, setTeams] = useState([])
+  const [loading, setLoading] = useState(true)
   const [standings, setStandings] = useState([
     { rank: 1, team: 'Team Alpha', wins: 3, losses: 0, points: 9 },
     { rank: 2, team: 'Team Gamma', wins: 2, losses: 1, points: 6 },
@@ -24,15 +18,127 @@ export default function StandingsPage() {
     { rank: 4, team: 'Team Beta', wins: 0, losses: 3, points: 0 },
   ])
 
-  // Mock tournament data - replace with Supabase query later
-  const tournament = {
-    name: 'National Debate Championship 2025',
-    format: 'British Parliamentary',
-    location: 'New York City',
-    date: 'Jan 15-18, 2025',
-    teams: 64,
-    status: 'Active'
+  useEffect(() => {
+    fetchTournamentData()
+  }, [slug])
+
+  async function fetchTournamentData() {
+    try {
+      setLoading(true)
+
+      // Check if this is a demo tournament
+      const demoTournaments = {
+        'national-debate-championship-2025': {
+          name: 'National Debate Championship 2025',
+          date: '2025-03-15',
+          time: '09:00',
+          rounds: 5,
+          out_rounds: 2,
+          members_per_team: 4
+        },
+        'regional-debate-series-spring': {
+          name: 'Regional Debate Series - Spring',
+          date: '2025-04-20',
+          time: '10:00',
+          rounds: 4,
+          out_rounds: 1,
+          members_per_team: 3
+        },
+        'inter-university-championship': {
+          name: 'Inter-University Championship',
+          date: '2024-12-10',
+          time: '08:30',
+          rounds: 6,
+          out_rounds: 3,
+          members_per_team: 4
+        }
+      }
+
+      if (demoTournaments[slug]) {
+        setTournament(demoTournaments[slug])
+        setTeams([]) // Demo tournaments don't need full team data here
+        setLoading(false)
+        return
+      }
+
+      // Fetch real tournament
+      const { data: tournamentData, error: tournamentError } = await supabase
+        .from('tournaments')
+        .select('*')
+        .eq('slug', slug)
+        .single()
+
+      if (tournamentError) throw tournamentError
+
+      setTournament(tournamentData)
+
+      // Fetch teams count
+      const { count } = await supabase
+        .from('teams')
+        .select('*', { count: 'exact', head: true })
+        .eq('tournament_id', tournamentData.id)
+
+      setTeams({ length: count || 0 })
+    } catch (err) {
+      console.error('Error fetching tournament:', err)
+    } finally {
+      setLoading(false)
+    }
   }
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/')
+  }
+
+  const organizerName = user?.user_metadata?.username || user?.email?.split('@')[0] || 'organizer'
+
+  function formatDate(dateString) {
+    if (!dateString) return 'Date TBD'
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric', 
+      year: 'numeric' 
+    })
+  }
+
+  function getTournamentStatus(date) {
+    if (!date) return 'Saved'
+    
+    const now = new Date()
+    now.setHours(0, 0, 0, 0)
+    const tournamentDate = new Date(date)
+    tournamentDate.setHours(0, 0, 0, 0)
+    
+    if (now < tournamentDate) return 'Saved'
+    if (now.getTime() === tournamentDate.getTime()) return 'Active'
+    if (now > tournamentDate) return 'Completed'
+    return 'Saved'
+  }
+
+  const isInfoActive = location.pathname === `/tournament/${slug}`
+  const isRoundsActive = location.pathname.includes('/rounds')
+  const isStandingsActive = location.pathname.includes('/standings')
+
+  if (loading || !tournament) {
+    return (
+      <>
+        <nav className="organizer-navbar">
+          <div className="nav-brand">
+            <Link to="/" className="logo">
+              <span className="logo-text">TourGanizer</span>
+            </Link>
+          </div>
+        </nav>
+        <div className="page" style={{ textAlign: 'center', padding: '3rem' }}>
+          Loading...
+        </div>
+      </>
+    )
+  }
+
+  const status = getTournamentStatus(tournament.date)
 
   return (
     <>
@@ -64,9 +170,25 @@ export default function StandingsPage() {
           </Link>
         </div>
         <div className="nav-actions">
-          <button className="btn btn-secondary" onClick={handleSignOut}>
-            Sign Out
-          </button>
+          {user ? (
+            <>
+              <Link to={`/${organizerName}`} className="btn btn-text" style={{marginRight: '0.5rem'}}>
+                Dashboard
+              </Link>
+              <button className="btn btn-secondary" onClick={handleSignOut}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/signup" className="btn btn-secondary" style={{marginRight: '0.5rem'}}>
+                Get Started
+              </Link>
+              <Link to="/signin" className="btn btn-primary">
+                Login
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -75,24 +197,29 @@ export default function StandingsPage() {
           <div>
             <h1>{tournament.name}</h1>
             <p className="meta">
-              {tournament.format} • {tournament.location} • {tournament.date}
+              {formatDate(tournament.date)} • {tournament.time || 'Time TBD'}
             </p>
             <div style={{ marginTop: '1rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
               <div>
                 <span className="info-label">Total Teams: </span>
-                <span className="info-value">{tournament.teams}</span>
+                <span className="info-value">{teams.length || 0}</span>
+              </div>
+              <div>
+                <span className="info-label">Rounds: </span>
+                <span className="info-value">{tournament.rounds}</span>
+              </div>
+              <div>
+                <span className="info-label">Out-Rounds: </span>
+                <span className="info-value">{tournament.out_rounds}</span>
               </div>
               <div>
                 <span className="info-label">Status: </span>
-                <span className={`status-badge status-${tournament.status.toLowerCase()}`}>
-                  {tournament.status}
+                <span className={`status-badge status-${status.toLowerCase()}`}>
+                  {status}
                 </span>
               </div>
             </div>
           </div>
-          <Link to={`/${user?.username}/tournaments`} className="btn btn-secondary">
-            Back to Tournaments
-          </Link>
         </div>
         
         <table className="standings-table">

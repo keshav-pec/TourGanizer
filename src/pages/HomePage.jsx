@@ -52,8 +52,8 @@ export default function HomePage() {
             <Link to="/signup" className="btn btn-primary btn-large">
               Start Organizing
             </Link>
-            <Link to="/tournaments" className="btn btn-secondary btn-large">
-              View Demo Tournament
+            <Link to="/Demo/tournaments" className="btn btn-secondary btn-large">
+              View Demo Tournaments
             </Link>
           </div>
           <p className="hero-note">✨ Organize Tournaments at Affordable Prices</p>
