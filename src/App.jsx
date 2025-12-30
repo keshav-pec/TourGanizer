@@ -2,6 +2,8 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import HomePage from './pages/HomePage'
+import SignInPage from './pages/SignInPage'
+import SignUpPage from './pages/SignUpPage'
 import LoginPage from './pages/LoginPage'
 import OrganizerDashboard from './pages/OrganizerDashboard'
 import TournamentsPage from './pages/TournamentsPage'
@@ -16,6 +18,8 @@ export default function App() {
     <AuthProvider>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/:username" element={<OrganizerDashboard />} />
         <Route path="/:username/tournaments" element={<TournamentsPage />} />

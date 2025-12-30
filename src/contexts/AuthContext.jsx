@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
+import { supabase } from '../lib/supabase'
 
 /**
  * AuthContext - pluggable authentication context.
@@ -17,56 +18,117 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Check for existing session on mount
-    const stored = localStorage.getItem('auth.user')
-    if (stored) {
-      setUser(JSON.parse(stored))
-    }
-    setLoading(false)
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      setLoading(false)
+    })
+
+    return () => subscription.unsubscribe()
   }, [])
 
-  async function signUp({ email, password, username }) {
-    // STUB: Replace with supabase.auth.signUp({ email, password })
-    // Note: Store username in user metadata and ensure uniqueness in Supabase
-    const u = { 
-      id: 'local-' + Date.now(), 
-      email, 
-      username: username,
-      created_at: new Date().toISOString() 
-    }
-    localStorage.setItem('auth.user', JSON.stringify(u))
-    localStorage.setItem('auth.token', 'stub-token-' + Date.now())
-    setUser(u)
-    return { user: u, error: null }
+//   useEffect(() => {
+//     // Check for existing session on mount
+//     const stored = localStorage.getItem('auth.user')
+//     if (stored) {
+//       setUser(JSON.parse(stored))
+//     }
+//     setLoading(false)
+//   }, [])
+
+  async function signUp({ email, password, username, role }) {
+    // Sign up with email/password and store username + role in metadata
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          username: username || email.split('@')[0],
+          role: role || 'organizer' // Default to organizer role
+        }
+      }
+    })
+    
+    if (error) return { user: null, error }
+    return { user: data.user, error: null }
   }
 
   async function signIn({ email, password }) {
-    // STUB: Replace with supabase.auth.signInWithPassword({ email, password })
-    // Note: Fetch username from Supabase user metadata
-    const u = { 
-      id: 'local-' + Date.now(), 
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
-      username: email.split('@')[0] // Temporary - will fetch from Supabase
-    }
-    localStorage.setItem('auth.user', JSON.stringify(u))
-    localStorage.setItem('auth.token', 'stub-token-' + Date.now())
-    setUser(u)
-    return { user: u, error: null }
+      password
+    })
+    
+    if (error) return { user: null, error }
+    return { user: data.user, error: null }
   }
 
   async function signOut() {
-    // STUB: Replace with supabase.auth.signOut()
-    localStorage.removeItem('auth.user')
-    localStorage.removeItem('auth.token')
+    const { error } = await supabase.auth.signOut()
+    if (error) throw error
     setUser(null)
   }
+
+  async function signInWithGoogle() {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`
+      }
+    })
+    
+    if (error) return { error }
+    return { data, error: null }
+  }
+
+//   async function signUp({ email, password, username }) {
+//     // STUB: Replace with supabase.auth.signUp({ email, password })
+//     // Note: Store username in user metadata and ensure uniqueness in Supabase
+//     const u = { 
+//       id: 'local-' + Date.now(), 
+//       email, 
+//       username: username,
+//       created_at: new Date().toISOString() 
+//     }
+//     localStorage.setItem('auth.user', JSON.stringify(u))
+//     localStorage.setItem('auth.token', 'stub-token-' + Date.now())
+//     setUser(u)
+//     return { user: u, error: null }
+//   }
+
+//   async function signIn({ email, password }) {
+//     // STUB: Replace with supabase.auth.signInWithPassword({ email, password })
+//     // Note: Fetch username from Supabase user metadata
+//     const u = { 
+//       id: 'local-' + Date.now(), 
+//       email,
+//       username: email.split('@')[0] // Temporary - will fetch from Supabase
+//     }
+//     localStorage.setItem('auth.user', JSON.stringify(u))
+//     localStorage.setItem('auth.token', 'stub-token-' + Date.now())
+//     setUser(u)
+//     return { user: u, error: null }
+//   }
+
+//   async function signOut() {
+//     // STUB: Replace with supabase.auth.signOut()
+//     localStorage.removeItem('auth.user')
+//     localStorage.removeItem('auth.token')
+//     setUser(null)
+//   }
 
   function getToken() {
     return localStorage.getItem('auth.token')
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, getToken }}>
+    <AuthContext.Provider value={{ user, loading, signUp, signIn, signOut, signInWithGoogle, getToken }}>
       {children}
     </AuthContext.Provider>
   )

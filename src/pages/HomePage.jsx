@@ -1,7 +1,17 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../contexts/AuthContext'
 
 export default function HomePage() {
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
+  const organizerName = user?.user_metadata?.username || user?.email?.split('@')[0] || 'organizer'
+
+  async function handleSignOut() {
+    await signOut()
+    navigate('/')
+  }
+
   return (
     <div className="landing-page">
       {/* Landing Navbar */}
@@ -12,8 +22,17 @@ export default function HomePage() {
           </Link>
         </div>
         <div className="landing-nav-actions">
-          <Link to="/login" className="btn btn-secondary">Get Started</Link>
-          <Link to="/login" className="btn btn-primary">Login</Link>
+          {user ? (
+            <>
+              <Link to={`/${organizerName}`} className="btn btn-secondary">Dashboard</Link>
+              <button onClick={handleSignOut} className="btn btn-primary">Sign Out</button>
+            </>
+          ) : (
+            <>
+              <Link to="/signup" className="btn btn-secondary">Get Started</Link>
+              <Link to="/signin" className="btn btn-primary">Login</Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -30,7 +49,7 @@ export default function HomePage() {
             generate draws, track results, and publish standings — all in real-time.
           </p>
           <div className="hero-cta">
-            <Link to="/login" className="btn btn-primary btn-large">
+            <Link to="/signup" className="btn btn-primary btn-large">
               Start Organizing
             </Link>
             <Link to="/tournaments" className="btn btn-secondary btn-large">
@@ -86,7 +105,7 @@ export default function HomePage() {
         <div className="cta-content">
           <h2>Ready to organize your next tournament?</h2>
           <p>Join hundreds of organizers who trust TourGanizer for their events</p>
-          <Link to="/login" className="btn btn-primary btn-large">Get Started Now</Link>
+          <Link to="/signup" className="btn btn-primary btn-large">Get Started Now</Link>
         </div>
       </section>
 
