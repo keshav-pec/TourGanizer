@@ -104,7 +104,12 @@ export default function TournamentDashboard() {
                 <div key={team.id} className="team-item">
                   <span className="team-name">{team.name} : </span>
                   <span className="team-members-inline">
-                    {team.members.join(', ')}
+                    {team.members.map((member, idx) => (
+                      <React.Fragment key={idx}>
+                        <span className="member-name-item">{member}</span>
+                        {idx < team.members.length - 1 && <span className="member-separator">, </span>}
+                      </React.Fragment>
+                    ))}
                   </span>
                 </div>
               ))}

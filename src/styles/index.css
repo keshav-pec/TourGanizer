@@ -1175,6 +1175,17 @@ body {
   font-size: 0.9375rem;
   color: var(--gray-700);
   line-height: 1.6;
+  padding-left: 0.5rem;
+}
+
+.member-name-item {
+  margin-right: 0.25rem;
+}
+
+.member-separator {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-right: 0.25rem;
 }
 
 /* Tournaments Grid */
